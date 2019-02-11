@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Beat Saber Hub</title>
+
+    <meta name="description" content="Beat Saber multiplayer hub for unofficial Beat Saber multiplayer mod.">
+    <meta name="author" content="Noryx">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <style type="text/css">
+    body {
+        margin: 0;
+        padding: 0;
+        position: relative;
+    }
+    section {
+        margin: 1rem 2rem;
+    }
+    .data {
+        padding: 0.4rem 0;
+    }
+    .title {
+        font-weight: bold;
+        margin-right: 1rem;
+    }
+    table {
+        width: 100%;
+    }
+    table th {
+        text-align: left;
+    }
+    table td {
+        padding: 0.3rem 0;
+    }
+    </style>
+</head>
+<body>
+    
+    <section id="clearview">
+        <template v-if="selectedRoom && selectedRoom.info">
+            <div class="data" id="room-name"><span class="title">Room name</span><span class="value">{{ selectedRoom.name }}</span></div>
+            <div class="data" id="room-state">
+                <span class="title">Room state</span>
+                <span class="value">
+                    <span v-if="selectedRoom.playing || selectedRoom.info.roomState == 'InGame'">playing</span>
+                    <span v-else-if="selectedRoom.info.roomState == 'Preparing'">preparing</span>
+                    <span v-else-if="selectedRoom.info.roomState == 'SelectingSong'">selecting song</span>
+                    <span v-else-if="selectedRoom.info.roomState == 'Results'">results</span>
+                    <span v-else>{{ selectedRoom.info.roomState }}</span>
+                </span>
+            </div>
+            <div class="data" id="room-players"><span class="title">Players</span><span class="value">{{ selectedRoom.info.players }}</span></div>
+            <div class="data" id="room-maxplayers"><span class="title">Players limit</span><span class="value">{{ selectedRoom.info.maxPlayers }}</span></div>
+            <div class="data" id="room-password"><span class="title">Has password</span><span class="value" v-if="selectedRoom.info.usePassword">yes</span><span class="value" v-else>no</span></div>
+            <div class="data" id="room-nofail"><span class="title">No Fail</span><span class="value" v-if="selectedRoom.info.noFail">yes</span><span class="value" v-else>no</span></div>
+
+            <div class="data" id="level-name"><span class="title">Song name</span><span class="value">{{ selectedRoom.song.songName }}</span></div>
+            <div class="data" id="level-difficulty">
+                <span class="title">Difficulty</span>
+                <span class="value">
+                    <span v-if="selectedRoom.difficulty == 0">easy</span>
+                    <span v-else-if="selectedRoom.difficulty == 1">normal</span>
+                    <span v-else-if="selectedRoom.difficulty == 2">hard</span>
+                    <span v-else-if="selectedRoom.difficulty == 3">expert</span>
+                    <span v-else-if="selectedRoom.difficulty == 4">expert+</span>
+                </span>
+            </div>
+            <div class="data" id="level-coverurl"><span class="title">Cover</span><span class="value">{{ selectedRoom.cover }}</span></div>
+            <div class="data" id="level-cover">
+                <span class="value">
+                    <img v-if="selectedRoom.cover.length > 0" v-bind:src="selectedRoom.cover" v-bind:alt="selectedRoom.song.songName" @error="selectedRoom.cover = './nocover.png';" />
+                    <img v-else src="./nocover.png" alt="nocover" />
+                </span>
+            </div>
+
+            <table id="scoreboard">
+                <thead>
+                    <tr>
+                        <th style="width:25%">Player</th>
+                        <th style="width:15%">Score</th>
+                        <th style="width:15%">Blocks</th>
+                        <th style="width:15%">Combo</th>
+                        <th style="width:15%">Energy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="player in selectedRoom.players" v-bind:id="'player-' + player.playerIdString">
+                        <td class="player-name">{{ player.playerName }}</td>
+                        <td class="player-score">{{ player.playerScore }}</td>
+                        <td class="player-blocks">{{ player.playerCutBlocks }}</td>
+                        <td class="player-combo">{{ player.playerComboBlocks }}</td>
+                        <td class="player-energy">{{ player.playerEnergy }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </template>
+    </section>
+
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.2/dist/vue.min.js"></script>
+    <script src="./js/common.js"></script>
+    <script src="./js/clearview.js"></script>
+    <script type="text/javascript">
+    // Hub settings
+    roomApp.host = "hub.pawz.xyz"; // Hub hostname
+    roomApp.port = "3700"; // Hub port
+    roomApp.ws = "ws://hub.pawz.xyz:3800"; // Hub websocket
+    roomApp.wss = "wss://hub.pawz.xyz/wss"; // Hub secure websocket
+
+    // Run
+    roomApp.start();
+    </script>
+</body>
+</html>

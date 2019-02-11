@@ -1,0 +1,100 @@
+/* style.css - saberhub
+   Created by Noryx <contact@pawz.xyz> - github https://github.com/Eryux/saberhub
+   MIT License */
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    color: #333;
+    background: #fefefe;
+    margin-bottom: 100px;
+    min-width: 400px;
+}
+
+section {
+    width: 98%;
+    max-width: 960px;
+    margin: 1rem auto;
+}
+
+h1 {
+    margin: 2rem 0;
+}
+
+.room {
+    margin: 1rem 0;
+}
+
+.room .card-header {
+    color: #666;
+    font-weight: bold;
+}
+
+.room .expand-btn .btn {
+    color: inherit;
+    padding: 0;
+}
+
+.room .expand-btn .btn:hover {
+    color: #333;
+}
+
+.room .expand-btn .btn:focus {
+    outline: 0 !important;
+    box-shadow: none;
+}
+
+.room .song-thumbnail img {
+    width: 100%;
+    max-width: 200px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.room .card-body {
+    display: none;
+    overflow: hidden;
+    height: 0px;
+}
+
+.room .card-body.showed {
+    display: block;
+    overflow: auto;
+    height: auto;
+}
+
+.room .clearview {
+    margin: 0.1rem 0;
+    font-size: 0.8rem;
+}
+
+.hidden-overflow {
+    overflow: hidden;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-size: 0.8em;
+    background: #efefef;
+}
+
+footer .footer-content {
+    width: 98%;
+    max-width: 960px;
+    margin: 0.8rem auto;
+    font-size: 0.8rem;
+}
+
+footer .footer-links a {
+    color: #666;
+    font-size: 1.4rem;
+}
+
+footer .footer-links a:hover {
+    color: #333;
+}

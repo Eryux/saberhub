@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Beat Saber Hub</title>
+
+    <meta name="description" content="Beat Saber multiplayer hub for unofficial Beat Saber multiplayer mod.">
+    <meta name="author" content="Noryx">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+    <section id="hub">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <h1 class="display-4 col-md-10">Welcome on <b>{{ host }}</b> !</h1>
+                </div>
+                <hr class="my-4">
+                <p class="lead">
+                    <b>{{ host }}</b> is a public <b>Beat Saber</b> multiplayer hub for <a href="https://github.com/andruzzzhka/BeatSaberMultiplayer" target="_blank">unofficial multiplayer mod</a>.<br />
+                    For more informations about multiplayer mod, check <a href="https://bs.assistant.moe/Multiplayer/" target="_blank">the guide</a>.</p>
+                <hr class="my-4">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-text">
+
+                            <!-- Hub status -->
+                            <h4 class="card-title" v-if="status == 'ONLINE'">Hub is currently </b><span class="badge badge-success">online</span> running on version <span class="badge badge-secondary">{{ version }}</span></h4>
+                            <h4 class="card-title" v-else-if="status == 'OFFLINE'">Hub is currently </b><span class="badge badge-danger">down</span></h4>
+                            <div class="text-center" v-else><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading ...</span></div></div>
+                            <hr>
+
+                            <!-- Hub details -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Host</span>
+                                        </div>
+                                        <input type="text" class="form-control" v-bind:value="host" readonly />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Port</span>
+                                        </div>
+                                        <input type="text" class="form-control" v-bind:value="port" readonly />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Websocket</span>
+                                        </div>
+                                        <input type="text" class="form-control" v-bind:value="ws" readonly />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Secure Websocket</span>
+                                        </div>
+                                        <input type="text" class="form-control" v-bind:value="wss" readonly />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- Hub rooms -->
+        <div class="row">
+            <div class="col-md-12">
+                <template v-if="status == 'ONLINE'">
+                    <template v-if="roomCount > 0">
+                        <p class="lead">There is <span class="badge badge-primary">{{ totalPlayers }}</span> player(s) online in <span class="badge badge-primary">{{ roomCount }}</span> room(s).</p>
+                        
+                        <div id="rooms">
+                            <div class="card room" v-for="room in rooms">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-md-1 col-sm-1"><i class="fas fa-lock" v-if="room.info && room.info.usePassword"></i></div>
+                                        <div class="col-md-2 col-sm-2"><span v-if="room.info">{{ room.info.players }} / <span v-if="room.info.maxPlayers == 0">&infin;</span><span v-else>{{ room.info.maxPlayers }}</span></div>
+                                        <div class="col-md-7 col-sm-7 hidden-overflow">{{ room.name }}</div>
+                                        <div class="col-md-2 col-sm-2 text-right expand-btn"><button class="btn" type="button" v-on:click="toggleSelectedRoom(room.id, $event)"><i v-if="selectedRoom && room.id == selectedRoom.id" class="fas fa-minus"></i><i v-else class="fas fa-plus"></i></button></div>
+                                    </div>
+                                </div>
+                                <div v-bind:class="(selectedRoom && selectedRoom.id === room.id) ? 'card-body showed' : 'card-body'" v-bind:id="'room-' + room.id" data-parent="#rooms">
+                                    <div class="card-text">
+                                        <div class="row">
+                                            <div class="col-md-3 text-center song-thumbnail">
+                                                <img v-if="room.cover.length > 0" v-bind:src="room.cover" v-bind:alt="room.song.songName" @error="room.cover = './nocover.png';" />
+                                                <img v-else src="./nocover.png" alt="nocover" />
+                                            </div>
+                                            <div class="col-md-9">
+                                                <table class="table">
+                                                    <tr>
+                                                        <td><b>State</b></td>
+                                                        <td>
+                                                            <template v-if="room.info">
+                                                                <span v-if="room.playing || room.info.roomState == 'InGame'">Playing</span>
+                                                                <span v-else-if="room.info.roomState == 'Preparing'">Preparing</span>
+                                                                <span v-else-if="room.info.roomState == 'SelectingSong'">Selecting Song</span>
+                                                                <span v-else-if="room.info.roomState == 'Results'">Results</span>
+                                                                <span v-else>{{ room.info.roomState }}</span>
+                                                            </template>
+                                                            <span v-else>-</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Song</b></td>
+                                                        <td><span v-if="room.song">{{ room.song.songName }}</span><span v-else>-</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Difficulty</b></td>
+                                                        <td>
+                                                            <span v-if="room.difficulty == 0">Easy</span>
+                                                            <span v-else-if="room.difficulty == 1">Normal</span>
+                                                            <span v-else-if="room.difficulty == 2">Hard</span>
+                                                            <span v-else-if="room.difficulty == 3">Expert</span>
+                                                            <span v-else-if="room.difficulty == 4">Expert+</span>
+                                                            <span v-else>-</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr><td><b>No Fail</b></td><td><span v-if="room.info && room.info.noFail">Yes</span><span v-else>No</span></td></tr>
+                                                </table>
+                                            </div>
+                                        </div>
+            
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Player</th>
+                                                    <th>Score</th>
+                                                    <th>Blocks</th>
+                                                    <th>Combo</th>
+                                                    <th>Energy</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="player in room.players">
+                                                    <td class="text-center"><i class="fas fa-crown" v-if="room.info && player.playerIdString == room.info.roomHost.playerIdString"></i></td>
+                                                    <td><a v-bind:href="'https://scoresaber.com/u/' + player.playerIdString" target="_blank">{{ player.playerName }}</a></td>
+                                                    <td>{{ player.playerScore }}</td>
+                                                    <td>{{ player.playerCutBlocks }}</td>
+                                                    <td>{{ player.playerComboBlocks }}</td>
+                                                    <td>{{ player.playerEnergy }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+            
+                                        <p class="clearview" v-if="enableClearview">Use <a v-bind:href="'./clear.html?' + room.path" target="_blank">room clear view</a> for stream integration.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <div class="alert alert-info text-center" v-else>Oops, it seem that nobody playing on this hub.</div>
+                </template>
+                <template v-else-if="status == 'OFFLINE'">
+                    <div class="alert alert-danger text-center">Oops, this hub is offline.</div>
+                </template>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="row">
+                <div class="col-md-8 col-sm-6">
+                    <strong>saberhub</strong><br />
+                    Beat Saber multiplayer hub.
+                </div>
+                <div class="col-md-4 col-sm-6 text-right footer-links">
+                    <a href="https://github.com/Eryux/saberhub" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://discordapp.com/invite/beatsabermods" target="_blank"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.2/dist/vue.min.js"></script>
+    <script src="./js/common.js"></script>
+    <script src="./js/app.js"></script>
+    <script type="text/javascript">
+    // Hub settings
+    hubApp.host = "hub.pawz.xyz"; // Hub hostname
+    hubApp.port = "3700"; // Hub port
+    hubApp.ws = "ws://hub.pawz.xyz:3800"; // Hub websocket
+    hubApp.wss = "wss://hub.pawz.xyz/wss"; // Hub secure websocket
+
+    // Run
+    hubApp.start();
+    </script>
+</body>
+</html>
