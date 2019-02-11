@@ -47,7 +47,7 @@ If you want to use HTTPS with this landing page you will need to upgrade websock
 
 * Enable Apache `proxy` and `proxy_wstunnel` mods.
 
-* In your Apache virtual host file of your hub add this followings lines
+* In your Apache virtual host file of your hub add this following lines
 
 ```
 ProxyRequests Off
