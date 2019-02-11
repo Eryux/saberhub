@@ -2,7 +2,7 @@
 
 ![bootstrap v4.2.1](https://img.shields.io/badge/Bootstrap%204-v4.2.1-blue.svg) ![vue.js v2.6.2](https://img.shields.io/badge/vue.js-v2.6.2-blue.svg)
 
-**saberhub** is a landing page template for multiplayer Beat Saber hub from [multiplayer mod](https://github.com/andruzzzhka/BeatSaberMultiplayer).
+**saberhub** is a landing page template for Beat Saber multiplayer hub from [multiplayer mod](https://github.com/andruzzzhka/BeatSaberMultiplayer).
 
 
 ### Usage
@@ -43,7 +43,7 @@ hubApp.enableClearview = false; // Disable clear view link display
 
 ### Using HTTPS with Websocket on Apache
 
-If you want to use HTTPS with this landing page on Apache you will need to upgrade websocket to websocket secure using a reverse proxy.
+If you want to use HTTPS with this landing page you will need to upgrade websocket to websocket secure using a reverse proxy.
 
 * Enable Apache `proxy` and `proxy_wstunnel` mods.
 
@@ -54,7 +54,7 @@ ProxyRequests Off
 ProxyPass /wss ws://<host>:<port>
 ```
 
-* Use url wss://<host>/wss for connecting to websocket server
+* Use url `wss://<host>/wss` for connecting to websocket server
 
 
 Example of virtual host file for websocket host hub.pawz.xyz on port 3800
@@ -85,12 +85,12 @@ Example of virtual host file for websocket host hub.pawz.xyz on port 3800
 </IfModule>
 ```
 
-Websocket secure url for hub.pawz.xyz is wss://hub.pawz.xyz/wss
+Websocket secure url for hub.pawz.xyz is `wss://hub.pawz.xyz/wss`
 
 
 ### Using HTTPS with Websocket on NGINX
 
-* Look example on [HubStatistics landing page](https://github.com/beat-saber-modding-group/HubStatistics).
+* Look example on [HubStatistics landing page](https://github.com/beat-saber-modding-group/HubStatistics)
 
 
 ### License
