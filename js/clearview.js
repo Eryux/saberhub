@@ -21,7 +21,7 @@ var roomApp = new Vue({
         start: function() {
             let room = {'RoomName':'', 'Path':window.location.search.substring(1)};
             if (room['Path'] !== '') {
-                this.selectedRoom = new hubRoom(this.ws, room, this);
+                this.selectedRoom = (location.protocol == 'https:') ? new hubRoom(this.wss, room, this) : new hubRoom(this.ws, room, this);
                 this.selectedRoom.start();
             }
         }

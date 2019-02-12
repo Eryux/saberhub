@@ -38,7 +38,7 @@ var hubApp = new Vue({
     },
     methods: {
         start: function() {
-            listener = (location.protocol == 'https:') ? listener = new hubListener(this.wss) : listener = new hubListener(this.ws);
+            listener = (location.protocol == 'https:') ? new hubListener(this.wss) : new hubListener(this.ws);
             listener.actions.push(this.onHubUpdate);
             listener.connect(this.onHubConnect);
         },
